@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Config {
+  id        Int      @id @default(autoincrement())
+  version   Int      @default(1)
+  data      Json
+  createdAt DateTime @default(now()) @map("created_at")
+  isActive  Boolean  @default(true) @map("is_active")
+
+  @@map("config")
+}
+
+model Entry {
+  id           Int       @id @default(autoincrement())
+  checkpointId String?   @map("checkpoint_id")
+  pillar       String
+  category     String
+  metricKey    String    @map("metric_key")
+  valueNumeric Decimal?  @map("value_numeric")
+  valueText    String?   @map("value_text")
+  valueBoolean Boolean?  @map("value_boolean")
+  proofUrl     String?   @map("proof_url")
+  proofType    String?   @map("proof_type")
+  isVerified   Boolean   @default(false) @map("is_verified")
+  notes        String?
+  loggedAt     DateTime  @default(now()) @map("logged_at")
+  entryDate    DateTime  @map("entry_date") @db.Date
+
+  @@map("entries")
+}
+
+model SelfCheck {
+  id                  Int      @id @default(autoincrement())
+  weekDate            DateTime @map("week_date") @db.Date
+  energy              Int?
+  sleepQuality        Int?     @map("sleep_quality")
+  relationshipQuality Int?     @map("relationship_quality")
+  workSatisfaction    Int?     @map("work_satisfaction")
+  notes               String?
+  loggedAt            DateTime @default(now()) @map("logged_at")
+
+  @@map("self_checks")
+}
+
+model HabitLog {
+  id        Int      @id @default(autoincrement())
+  habitKey  String   @map("habit_key")
+  logDate   DateTime @map("log_date") @db.Date
+  completed Boolean  @default(true)
+  notes     String?
+
+  @@unique([habitKey, logDate])
+  @@map("habit_logs")
+}
